@@ -1,31 +1,31 @@
 package main
 
 import (
-	"path"
-	"path/filepath"
-
-	"github.com/gin-gonic/gin"
+    "fmt"
+    "log"
+    "net/http"
+    "encoding/json"
+    "github.com/gorilla/mux"
 )
 
+… // Existing code from above
+func handleRequests() {
+    // creates a new instance of a mux router
+    myRouter := mux.NewRouter().StrictSlash(true)
+    // replace http.HandleFunc with myRouter.HandleFunc
+    myRouter.HandleFunc("/", homePage)
+    myRouter.HandleFunc("/all", returnAllArticles)
+    // finally, instead of passing in nil, we want
+    // to pass in our newly created router as the second
+    // argument
+    log.Fatal(http.ListenAndServe(":10000", myRouter))
+}
+
 func main() {
-	r := gin.Default()
-	r.NoRoute(func(c *gin.Context) {
-		dir, file := path.Split(c.Request.RequestURI)
-		ext := filepath.Ext(file)
-		if file == "" || ext == "" {
-			c.File("./ui/dist/ui/index.html")
-		} else {
-			c.File("./ui/dist/ui/" + path.Join(dir, file))
-		}
-	})
-
-	r.GET("/todo", handlers.GetTodoListHandler)
-	r.POST("/todo", handlers.AddTodoHandler)
-	r.DELETE("/todo/:id", handlers.DeleteTodoHandler)
-	r.PUT("/todo", handlers.CompleteTodoHandler)
-
-	err := r.Run(":3000")
-	if err != nil {
-		panic(err)
-	}
+    fmt.Println("Rest API v2.0 - Mux Routers")
+    Articles = []Article{
+        Article{Title: "Hello", Desc: "Article Description", Content: "Article Content"},
+        Article{Title: "Hello 2", Desc: "Article Description", Content: "Article Content"},
+    }
+    handleRequests()
 }
